@@ -1,7 +1,9 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { apiRequest } from '../api/http.js';
+import { isDemoMode } from '../api/demo/demoMode.js';
 
 const AuthContext = createContext(null);
+const DEMO_AUTH_KEY = 'erp_portal_demo_auth_session';
 
 let pendingRefreshPromise = null;
 
@@ -17,6 +19,14 @@ export function AuthProvider({ children }) {
 
     if (session.tenant) {
       setTenant(session.tenant);
+    }
+
+    if (isDemoMode() && typeof window !== 'undefined') {
+      try {
+        window.localStorage.setItem(DEMO_AUTH_KEY, JSON.stringify(session));
+      } catch {
+        // Ignore storage errors
+      }
     }
   }, []);
 
@@ -45,6 +55,10 @@ export function AuthProvider({ children }) {
   );
 
   const refresh = useCallback(async () => {
+    if (isDemoMode()) {
+      return accessToken;
+    }
+
     if (pendingRefreshPromise) {
       return pendingRefreshPromise;
     }
@@ -60,7 +74,7 @@ export function AuthProvider({ children }) {
     })();
 
     return pendingRefreshPromise;
-  }, [applySession]);
+  }, [accessToken, applySession]);
 
   const logout = useCallback(async () => {
     try {
@@ -71,6 +85,13 @@ export function AuthProvider({ children }) {
       setAccessToken(null);
       setUser(null);
       setTenant(null);
+      if (typeof window !== 'undefined') {
+        try {
+          window.localStorage.removeItem(DEMO_AUTH_KEY);
+        } catch {
+          // Ignore storage errors
+        }
+      }
     }
   }, [accessToken]);
 
@@ -79,7 +100,7 @@ export function AuthProvider({ children }) {
       try {
         return await apiRequest(path, options, accessToken);
       } catch (error) {
-        if (error.status !== 401) {
+        if (error.status !== 401 || isDemoMode()) {
           throw error;
         }
 
@@ -90,9 +111,30 @@ export function AuthProvider({ children }) {
     [accessToken, refresh]
   );
 
-  // App boot: silent session restore via httpOnly refresh cookie
+  // App boot: check demo session or perform silent session restore via httpOnly refresh cookie
   useEffect(() => {
     let mounted = true;
+
+    if (isDemoMode()) {
+      try {
+        const saved = typeof window !== 'undefined' ? window.localStorage.getItem(DEMO_AUTH_KEY) : null;
+        if (saved) {
+          const session = JSON.parse(saved);
+          if (mounted && session?.accessToken && session?.user) {
+            applySession(session);
+          }
+        }
+      } catch (e) {
+        console.warn('Could not restore demo session', e);
+      } finally {
+        if (mounted) {
+          setBootstrapping(false);
+        }
+      }
+      return () => {
+        mounted = false;
+      };
+    }
 
     refresh()
       .catch(() => {
@@ -111,7 +153,7 @@ export function AuthProvider({ children }) {
     return () => {
       mounted = false;
     };
-  }, [refresh]);
+  }, [applySession, refresh]);
 
   const value = useMemo(
     () => ({

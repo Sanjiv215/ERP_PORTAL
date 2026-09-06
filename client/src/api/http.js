@@ -1,3 +1,6 @@
+import { isDemoMode } from './demo/demoMode.js';
+import { handleDemoRequest } from './demo/mockService.js';
+
 function getApiBaseUrl() {
   const envUrl = import.meta.env.VITE_API_BASE_URL;
   if (!envUrl) return '/api/v1';
@@ -16,6 +19,10 @@ export class ApiError extends Error {
 }
 
 export async function apiRequest(path, options = {}, accessToken) {
+  if (isDemoMode()) {
+    return handleDemoRequest(path, options);
+  }
+
   const headers = new Headers(options.headers || {});
   headers.set('Content-Type', 'application/json');
 
@@ -60,6 +67,23 @@ export async function apiRequest(path, options = {}, accessToken) {
 }
 
 export async function apiDownload(path, defaultFilename = 'download', accessToken) {
+  if (isDemoMode()) {
+    const sampleContent = `ERP Portal Demo Report — ${defaultFilename}\nGenerated: ${new Date().toISOString()}\nStatus: Demo Mode Active\n\nThis is a sample exported file generated in frontend-only demo mode.`;
+    const blob = new Blob([sampleContent], { type: 'text/plain;charset=utf-8;' });
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.style.display = 'none';
+    link.href = url;
+    link.download = defaultFilename.includes('.') ? defaultFilename : `${defaultFilename}.txt`;
+    document.body.appendChild(link);
+    link.click();
+    setTimeout(() => {
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+    }, 200);
+    return true;
+  }
+
   const cleanPath = path.startsWith('/') ? path : `/${path}`;
   const separator = cleanPath.includes('?') ? '&' : '?';
 

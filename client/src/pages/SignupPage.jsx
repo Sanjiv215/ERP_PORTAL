@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import { Link, Navigate, useNavigate } from 'react-router-dom';
-import { Building2, ArrowRight } from 'lucide-react';
+import { Building2, ArrowRight, Sparkles } from 'lucide-react';
 import { useAuth } from '../state/AuthContext.jsx';
+import { isDemoMode } from '../api/demo/demoMode.js';
 
 export function SignupPage() {
   const { signup, isAuthenticated, bootstrapping } = useAuth();
@@ -103,6 +104,11 @@ export function SignupPage() {
             Create your ERP Portal Workspace
           </h1>
           <p className="muted">Set up an isolated enterprise workspace and administrator account.</p>
+          {isDemoMode() && (
+            <div style={{ marginTop: 10, display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: '0.78rem', color: 'var(--brand-teal-dark)', background: 'var(--brand-teal-light)', padding: '4px 12px', borderRadius: 999, border: '1px solid #BAE6FD' }}>
+              <Sparkles size={13} /> Demo Mode Active — Test workspace will be created client-side in browser
+            </div>
+          )}
         </div>
 
         <form className="form-grid" onSubmit={handleSubmit}>

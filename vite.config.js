@@ -22,7 +22,7 @@ export default defineConfig({
   test: {
     root: '.',
     environment: 'jsdom',
-    include: ['server/**/*.test.js', 'client/src/**/*.test.jsx'],
+    include: ['server/**/*.test.js', 'client/src/**/*.test.jsx', 'client/src/**/*.test.js'],
     testTimeout: 30000
   }
 });

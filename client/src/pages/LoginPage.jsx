@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import { Link, Navigate, useLocation, useNavigate } from 'react-router-dom';
-import { LogIn, Lock, Mail, ArrowRight } from 'lucide-react';
+import { LogIn, Lock, Mail, ArrowRight, Sparkles } from 'lucide-react';
 import { useAuth } from '../state/AuthContext.jsx';
+import { isDemoMode, DEMO_CREDENTIALS } from '../api/demo/demoMode.js';
 
 export function LoginPage() {
   const { login, isAuthenticated, bootstrapping } = useAuth();
@@ -10,10 +11,35 @@ export function LoginPage() {
   const [submitting, setSubmitting] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
+  const demoActive = isDemoMode();
 
   useEffect(() => {
     document.title = 'Sign In — ERP Portal';
   }, []);
+
+  function handleAutoFillDemo() {
+    setForm({
+      email: DEMO_CREDENTIALS.email,
+      password: DEMO_CREDENTIALS.password
+    });
+    setError('');
+  }
+
+  async function handleInstantDemoLogin() {
+    setError('');
+    setSubmitting(true);
+    try {
+      await login({
+        email: DEMO_CREDENTIALS.email,
+        password: DEMO_CREDENTIALS.password
+      });
+      navigate(location.state?.from?.pathname || '/app/dashboard', { replace: true });
+    } catch (apiError) {
+      setError(apiError.message || 'Failed to sign in.');
+    } finally {
+      setSubmitting(false);
+    }
+  }
 
   if (bootstrapping) {
     return (
@@ -81,6 +107,77 @@ export function LoginPage() {
           </h1>
           <p className="muted">Enter your credentials to access your workspace.</p>
         </div>
+
+        {demoActive && (
+          <div
+            style={{
+              background: 'linear-gradient(135deg, #ECF8FA 0%, #EFF6FF 100%)',
+              border: '1px solid #BAE6FD',
+              borderRadius: 12,
+              padding: '14px 16px',
+              marginBottom: 20,
+              textAlign: 'left'
+            }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
+              <Sparkles size={18} style={{ color: 'var(--brand-teal-dark)' }} />
+              <strong style={{ fontSize: '0.9rem', color: 'var(--brand-navy-dark)' }}>
+                Public Frontend Demo Access
+              </strong>
+            </div>
+            <div style={{ fontSize: '0.82rem', color: 'var(--text-secondary)', lineHeight: 1.4, marginBottom: 12 }}>
+              <div>
+                <strong>Email:</strong>{' '}
+                <code style={{ background: '#FFFFFF', padding: '2px 6px', borderRadius: 4, border: '1px solid #CBD5E1' }}>
+                  {DEMO_CREDENTIALS.email}
+                </code>
+              </div>
+              <div style={{ marginTop: 4 }}>
+                <strong>Password:</strong>{' '}
+                <code style={{ background: '#FFFFFF', padding: '2px 6px', borderRadius: 4, border: '1px solid #CBD5E1' }}>
+                  {DEMO_CREDENTIALS.password}
+                </code>
+              </div>
+            </div>
+            <div style={{ display: 'flex', gap: 8 }}>
+              <button
+                type="button"
+                onClick={handleInstantDemoLogin}
+                disabled={submitting}
+                className="secondary-button"
+                style={{
+                  flex: 1,
+                  minHeight: 38,
+                  fontSize: '0.82rem',
+                  fontWeight: 700,
+                  background: '#FFFFFF',
+                  borderColor: 'var(--brand-teal)',
+                  color: 'var(--brand-teal-dark)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: 6
+                }}
+              >
+                <Sparkles size={14} /> 1-Click Demo Login
+              </button>
+              <button
+                type="button"
+                onClick={handleAutoFillDemo}
+                className="secondary-button"
+                style={{
+                  minHeight: 38,
+                  fontSize: '0.82rem',
+                  fontWeight: 600,
+                  background: '#FFFFFF'
+                }}
+                title="Auto-fill inputs"
+              >
+                Auto-fill
+              </button>
+            </div>
+          </div>
+        )}
 
         <form className="form-stack" onSubmit={handleSubmit}>
           {error && <p className="form-error" role="alert">{error}</p>}
