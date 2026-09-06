@@ -1,0 +1,47 @@
+databases:
+  - name: thewoodwise-db
+    databaseName: thewoodwise
+    user: thewoodwise_user
+    plan: starter
+    region: singapore
+    ipAllowList: [] # only allow internal services and whitelisted IPs
+
+services:
+  - type: web
+    name: thewoodwise-api
+    runtime: node
+    plan: starter
+    region: singapore
+    buildCommand: npm install && npm run migrate
+    startCommand: npm start
+    healthCheckPath: /api/v1/health
+    autoDeploy: true
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+      - key: CLIENT_ORIGIN
+        sync: false # Set to your Vercel frontend URL, e.g. https://lms-business-nine.vercel.app
+      - key: DATABASE_URL
+        fromDatabase:
+          name: thewoodwise-db
+          property: connectionString
+      - key: PG_SSL
+        value: true
+      - key: JWT_ACCESS_SECRET
+        generateValue: true
+      - key: JWT_REFRESH_SECRET
+        generateValue: true
+      - key: ACCESS_TOKEN_TTL
+        value: 15m
+      - key: REFRESH_TOKEN_TTL_DAYS
+        value: 7
+      - key: COOKIE_SECURE
+        value: true
+      - key: COOKIE_SAMESITE
+        value: none
+      - key: EMPLOYEE_FIELD_ENCRYPTION_KEY_BASE64
+        sync: false # 32-byte Base64 key: `openssl rand -base64 32`
+      - key: REDIS_URL
+        sync: false # e.g. rediss://default:password@your-upstash-redis.upstash.io:6379

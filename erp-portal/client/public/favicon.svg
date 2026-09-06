@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <defs>
+    <clipPath id="circleClipSm">
+      <circle cx="32" cy="32" r="30" />
+    </clipPath>
+  </defs>
+  <g clip-path="url(#circleClipSm)">
+    <rect width="64" height="64" fill="#19A2BF" />
+    <path d="M -5 28 C 18 28, 28 15, 42 20 C 52 23, 60 31, 70 31 L 70 50 C 55 50, 45 51, 34 45 C 20 37, 10 47, -5 47 Z" fill="#FFFFFF" />
+    <path d="M -5 47 C 10 47, 20 37, 34 45 C 45 51, 55 50, 70 50 L 70 70 L -5 70 Z" fill="#0F5394" />
+    <text x="14" y="38" font-family="'Georgia', serif" font-size="16" font-weight="900" fill="#0A111C">W</text>
+  </g>
+  <circle cx="32" cy="32" r="30" fill="none" stroke="#0F5394" stroke-width="1.5" />
+</svg>
