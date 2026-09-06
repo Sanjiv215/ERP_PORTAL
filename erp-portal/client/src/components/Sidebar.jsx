@@ -51,9 +51,9 @@ export function Sidebar() {
       <aside className="sidebar desktop-only-sidebar">
         <div>
           <Link to="/app/dashboard" className="brand-header" style={{ textDecoration: 'none' }}>
-            <img src="/woodwise-logo.svg" alt="TheWoodWise Logo" className="brand-logo-img" />
+            <img src="/erp-icon.svg" alt="ERP Portal Logo" className="brand-logo-img" />
             <div style={{ overflow: 'hidden' }}>
-              <h2 className="brand-title">TheWoodWise</h2>
+              <h2 className="brand-title">ERP Portal</h2>
               <p className="brand-workspace">{tenant?.businessName || 'Workspace'}</p>
             </div>
           </Link>
@@ -185,9 +185,9 @@ export function Sidebar() {
               onClick={closeMobileNav}
               style={{ margin: 0, textDecoration: 'none', gap: 10 }}
             >
-              <img src="/woodwise-logo.svg" alt="TheWoodWise Logo" className="brand-logo-img" style={{ width: 36, height: 36 }} />
+              <img src="/erp-icon.svg" alt="ERP Portal Logo" className="brand-logo-img" style={{ width: 36, height: 36 }} />
               <div style={{ overflow: 'hidden' }}>
-                <h2 className="brand-title" style={{ fontSize: '1.15rem' }}>TheWoodWise</h2>
+                <h2 className="brand-title" style={{ fontSize: '1.15rem' }}>ERP Portal</h2>
                 <p className="brand-workspace">{tenant?.businessName || 'Workspace'}</p>
               </div>
             </Link>

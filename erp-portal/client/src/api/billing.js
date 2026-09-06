@@ -43,12 +43,12 @@ export async function convertQuotationToInvoice(authenticatedRequest, quotationI
 }
 
 export async function downloadQuotationPdf(accessToken, quotationId, quotationNumber) {
-  const fallback = `TheWoodWise_Quotation_${quotationNumber || quotationId}.pdf`;
+  const fallback = `ERP_Portal_Quotation_${quotationNumber || quotationId}.pdf`;
   return apiDownload(`/billing/quotations/${quotationId}/pdf`, fallback, accessToken);
 }
 
 export async function downloadQuotationExcel(accessToken, quotationId, quotationNumber) {
-  const fallback = `TheWoodWise_Quotation_${quotationNumber || quotationId}.xlsx`;
+  const fallback = `ERP_Portal_Quotation_${quotationNumber || quotationId}.xlsx`;
   return apiDownload(`/billing/quotations/${quotationId}/xlsx`, fallback, accessToken);
 }
 
@@ -81,7 +81,7 @@ export async function deleteInvoice(authenticatedRequest, id) {
 }
 
 export async function downloadInvoicePdf(accessToken, invoiceId, invoiceNumber) {
-  const fallback = `TheWoodWise_Invoice_${invoiceNumber || invoiceId}.pdf`;
+  const fallback = `ERP_Portal_Invoice_${invoiceNumber || invoiceId}.pdf`;
   return apiDownload(`/billing/invoices/${invoiceId}/pdf`, fallback, accessToken);
 }
 

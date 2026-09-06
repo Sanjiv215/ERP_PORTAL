@@ -40,6 +40,29 @@ export async function createTenantWithAdmin(connection, payload) {
     [userId, tenantId, payload.name, payload.email, payload.phone || null, payload.passwordHash]
   );
 
+  const currentYear = new Date().getFullYear();
+  try {
+    await connection.execute(
+      `INSERT INTO document_sequences (tenant_id, doc_type, year, last_seq)
+       VALUES (?, 'quotation', ?, 0), (?, 'invoice', ?, 0)
+       ON CONFLICT (tenant_id, doc_type, year) DO NOTHING`,
+      [tenantId, currentYear, tenantId, currentYear]
+    );
+  } catch {
+    // Non-blocking initialization
+  }
+
+  try {
+    await connection.execute(
+      `INSERT INTO payroll_settings (tenant_id, working_days_per_month, overtime_multiplier, half_day_multiplier)
+       VALUES (?, 26, 1.50, 0.50)
+       ON CONFLICT (tenant_id) DO NOTHING`,
+      [tenantId]
+    );
+  } catch {
+    // Non-blocking initialization
+  }
+
   return {
     tenant: {
       id: tenantId,

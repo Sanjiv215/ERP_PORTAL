@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 100" width="100%" height="100%">
+  <defs>
+    <linearGradient id="epGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#2563EB" />
+      <stop offset="100%" stop-color="#0EA5E9" />
+    </linearGradient>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0F172A" />
+      <stop offset="100%" stop-color="#1E293B" />
+    </linearGradient>
+  </defs>
+
+  <!-- Logo Mark Container -->
+  <rect x="10" y="10" width="80" height="80" rx="18" fill="url(#bgGrad)" stroke="#334155" stroke-width="2" />
+  
+  <!-- Accent highlight bar -->
+  <rect x="22" y="24" width="8" height="52" rx="4" fill="url(#epGrad)" />
+  
+  <!-- Monogram EP -->
+  <text x="54" y="62" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="34" font-weight="900" fill="#FFFFFF" text-anchor="middle" letter-spacing="1">EP</text>
+
+  <!-- Brand Typography -->
+  <text x="112" y="52" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="28" font-weight="800" fill="#0F172A" letter-spacing="-0.5">ERP<tspan fill="#2563EB">PORTAL</tspan></text>
+  <text x="114" y="74" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="12" font-weight="600" fill="#64748B" letter-spacing="1.5">ENTERPRISE MANAGEMENT</text>
+</svg>

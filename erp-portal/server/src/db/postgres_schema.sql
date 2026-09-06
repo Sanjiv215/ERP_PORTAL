@@ -1,5 +1,5 @@
 -- ==============================================================================
--- TheWoodWise PostgreSQL Complete Production Schema
+-- ERP Portal PostgreSQL Complete Production Schema
 -- Compatible with PostgreSQL 14, 15, 16, 17, 18+ and Render Managed PostgreSQL
 -- ==============================================================================
 

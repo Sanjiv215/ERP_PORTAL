@@ -77,14 +77,25 @@ async function issueTokenPair(connection, user, requestMeta = {}) {
 }
 
 export async function signupTenant(payload, requestMeta) {
+  const checkConn = await pool.getConnection();
+  try {
+    const existing = await findUserByEmail(checkConn, payload.email.toLowerCase().trim());
+    if (existing) {
+      throw new AppError(409, 'An account with this email address already exists.', 'EMAIL_ALREADY_EXISTS');
+    }
+  } finally {
+    checkConn.release();
+  }
+
   const passwordHash = await hashPassword(payload.password);
 
   return withTransaction(async (connection) => {
+    const businessName = (payload.businessName && payload.businessName.trim()) || `${payload.name.trim()}'s Workspace`;
     const created = await createTenantWithAdmin(connection, {
-      businessName: payload.businessName,
+      businessName,
       gstNumber: payload.gstNumber,
-      name: payload.name,
-      email: payload.email.toLowerCase(),
+      name: payload.name.trim(),
+      email: payload.email.toLowerCase().trim(),
       phone: payload.phone,
       passwordHash
     });
@@ -100,11 +111,15 @@ export async function signupTenant(payload, requestMeta) {
 
     const tokens = await issueTokenPair(connection, created.user, requestMeta);
 
-    await sendWelcomeEmail({
-      to: created.user.email,
-      name: created.user.name,
-      businessName: created.tenant.business_name
-    });
+    try {
+      await sendWelcomeEmail({
+        to: created.user.email,
+        name: created.user.name,
+        businessName: created.tenant.business_name
+      });
+    } catch {
+      // Non-blocking welcome email
+    }
 
     return {
       tenant: {

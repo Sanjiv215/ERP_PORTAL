@@ -12,7 +12,7 @@ export function LoginPage() {
   const location = useLocation();
 
   useEffect(() => {
-    document.title = 'Sign In — TheWoodWise';
+    document.title = 'Sign In — ERP Portal';
   }, []);
 
   if (bootstrapping) {
@@ -20,8 +20,8 @@ export function LoginPage() {
       <main className="auth-shell">
         <section className="auth-panel" style={{ textAlign: 'center', padding: '48px 24px' }}>
           <img
-            src="/woodwise-logo.svg"
-            alt="TheWoodWise Logo"
+            src="/erp-icon.svg"
+            alt="ERP Portal Logo"
             className="auth-brand-logo"
             width="64"
             height="64"
@@ -70,14 +70,14 @@ export function LoginPage() {
       <section className="auth-panel">
         <div style={{ textAlign: 'center', marginBottom: 24 }}>
           <img
-            src="/woodwise-logo.svg"
-            alt="TheWoodWise Logo"
+            src="/erp-icon.svg"
+            alt="ERP Portal Logo"
             className="auth-brand-logo"
             width="72"
             height="72"
           />
           <h1 style={{ fontSize: '1.5rem', fontWeight: 800, margin: '0 0 6px', color: 'var(--text-main)' }}>
-            Sign in to TheWoodWise
+            Sign in to ERP Portal
           </h1>
           <p className="muted">Enter your credentials to access your workspace.</p>
         </div>
@@ -118,6 +118,15 @@ export function LoginPage() {
             {submitting ? 'Signing in...' : 'Sign In'}
           </button>
         </form>
+
+        <div style={{ borderTop: '1px solid var(--border-color)', paddingTop: 20, marginTop: 24, textAlign: 'center', fontSize: '0.88rem' }}>
+          <p className="muted">
+            Don't have an account?{' '}
+            <Link to="/signup" style={{ color: 'var(--brand-navy)', fontWeight: 700, display: 'inline-flex', alignItems: 'center', gap: 4 }}>
+              Sign up <ArrowRight size={14} />
+            </Link>
+          </p>
+        </div>
       </section>
     </main>
   );

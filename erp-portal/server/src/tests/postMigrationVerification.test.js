@@ -1,17 +1,71 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, beforeAll } from 'vitest';
 import { randomUUID } from 'node:crypto';
-import { pool } from '../db/pool.js';
+import bcrypt from 'bcrypt';
+import { pool, withTransaction } from '../db/pool.js';
 import { encryptSensitiveField, decryptSensitiveField } from '../utils/encryption.js';
-import { getPayrollRunDetail, generatePayrollRun } from '../services/payrollService.js';
+import { generatePayrollRun } from '../services/payrollService.js';
 import { getBusinessPL } from '../services/plService.js';
 
 describe('PostgreSQL Multi-Tenant Verification Suite', () => {
-  const TENANT_1 = '001';
-  const TENANT_2 = '002';
-  const CONTEXT_1 = { tenantId: TENANT_1, userId: '001', role: 'TenantAdmin' };
-  const CONTEXT_2 = { tenantId: TENANT_2, userId: '002', role: 'TenantAdmin' };
+  let TENANT_1;
+  let TENANT_2;
+  let USER_1_ID;
+  let USER_2_ID;
+  let USER_1_EMAIL;
+  let USER_2_EMAIL;
+  let CONTEXT_1;
+  let CONTEXT_2;
 
-  it('1. Verifies strict Tenant Isolation on PostgreSQL (Tenant 001 cannot see Tenant 002 data)', async () => {
+  beforeAll(async () => {
+    TENANT_1 = randomUUID();
+    TENANT_2 = randomUUID();
+    USER_1_ID = randomUUID();
+    USER_2_ID = randomUUID();
+    USER_1_EMAIL = `admin-${TENANT_1.slice(0, 8)}@erp-portal.com`;
+    USER_2_EMAIL = `admin-${TENANT_2.slice(0, 8)}@erp-portal.com`;
+    CONTEXT_1 = { tenantId: TENANT_1, userId: USER_1_ID, role: 'TenantAdmin' };
+    CONTEXT_2 = { tenantId: TENANT_2, userId: USER_2_ID, role: 'TenantAdmin' };
+
+    const hashed = await bcrypt.hash('SecurePassword123!', 10);
+
+    await withTransaction(async (conn) => {
+      // Seed Tenant 1
+      await conn.execute(
+        `INSERT INTO tenants (id, business_name, subscription_plan, status)
+         VALUES (?, 'Alpha Enterprises', 'pro', 'active')`,
+        [TENANT_1]
+      );
+      await conn.execute(
+        `INSERT INTO users (id, tenant_id, email, password_hash, name, role, is_active)
+         VALUES (?, ?, ?, ?, 'Alpha Admin', 'TenantAdmin', true)`,
+        [USER_1_ID, TENANT_1, USER_1_EMAIL, hashed]
+      );
+      await conn.execute(
+        `INSERT INTO payroll_settings (tenant_id, working_days_per_month, overtime_multiplier, half_day_multiplier)
+         VALUES (?, 26, 1.5, 0.5) ON CONFLICT (tenant_id) DO NOTHING`,
+        [TENANT_1]
+      );
+
+      // Seed Tenant 2
+      await conn.execute(
+        `INSERT INTO tenants (id, business_name, subscription_plan, status)
+         VALUES (?, 'Beta Corp', 'pro', 'active')`,
+        [TENANT_2]
+      );
+      await conn.execute(
+        `INSERT INTO users (id, tenant_id, email, password_hash, name, role, is_active)
+         VALUES (?, ?, ?, ?, 'Beta Admin', 'TenantAdmin', true)`,
+        [USER_2_ID, TENANT_2, USER_2_EMAIL, hashed]
+      );
+      await conn.execute(
+        `INSERT INTO payroll_settings (tenant_id, working_days_per_month, overtime_multiplier, half_day_multiplier)
+         VALUES (?, 26, 1.5, 0.5) ON CONFLICT (tenant_id) DO NOTHING`,
+        [TENANT_2]
+      );
+    });
+  });
+
+  it('1. Verifies strict Tenant Isolation on PostgreSQL (Tenant 1 cannot see Tenant 2 data)', async () => {
     const connection = await pool.getConnection();
     try {
       const [users1] = await connection.execute('SELECT id, email FROM users WHERE tenant_id = ?', [TENANT_1]);
@@ -19,9 +73,9 @@ describe('PostgreSQL Multi-Tenant Verification Suite', () => {
 
       expect(users1.length).toBeGreaterThan(0);
       expect(users2.length).toBeGreaterThan(0);
-      expect(users1.some(u => u.email === 'virendraprasad360@gmail.com')).toBe(true);
-      expect(users2.some(u => u.email === 'sanjiv@gmail.com')).toBe(true);
-      expect(users1.some(u => u.email === 'sanjiv@gmail.com')).toBe(false);
+      expect(users1.some(u => u.email === USER_1_EMAIL)).toBe(true);
+      expect(users2.some(u => u.email === USER_2_EMAIL)).toBe(true);
+      expect(users1.some(u => u.email === USER_2_EMAIL)).toBe(false);
     } finally {
       connection.release();
     }
@@ -32,7 +86,7 @@ describe('PostgreSQL Multi-Tenant Verification Suite', () => {
     try {
       const [users] = await connection.execute(
         'SELECT id, email, password_hash, role, is_active FROM users WHERE email = ?',
-        ['virendraprasad360@gmail.com']
+        [USER_1_EMAIL]
       );
       expect(users.length).toBe(1);
       const user = users[0];

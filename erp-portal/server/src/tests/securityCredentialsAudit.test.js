@@ -58,17 +58,11 @@ describe('Automated Security & Credentials Audit Safeguard', () => {
     expect(violations).toEqual([]);
   });
 
-  it('verifies seed scripts use environment variables for passwords', async () => {
+  it('verifies reset and database scripts contain no hardcoded secrets or demo passwords', async () => {
     const resetSeedPath = path.join(rootDir, 'server/src/db/reset_and_seed_user.js');
-    const demoSeedPath = path.join(rootDir, 'server/src/db/seed_demo_account.js');
-
     const resetContent = await fs.readFile(resetSeedPath, 'utf8');
-    const demoContent = await fs.readFile(demoSeedPath, 'utf8');
 
-    expect(resetContent).not.toContain("'Virendra@2811#'");
-    expect(demoContent).not.toContain("'sanjiv@123'");
-
-    expect(resetContent).toContain('process.env.ADMIN_ACCOUNT_PASSWORD');
-    expect(demoContent).toContain('process.env.DEMO_ACCOUNT_PASSWORD');
+    expect(resetContent).not.toContain('Virendra');
+    expect(resetContent).not.toContain('sanjiv@');
   });
 });

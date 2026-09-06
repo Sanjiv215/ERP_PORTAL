@@ -210,7 +210,7 @@ export async function getQuotationPdf(context, quotationId) {
     const pdfBuffer = await generateDocumentPdf(publicQuotation(q), 'quotation', tenant || {});
 
     return {
-      filename: `TheWoodWise_Quotation_${q.quotation_number}.pdf`,
+      filename: `ERP_Portal_Quotation_${q.quotation_number}.pdf`,
       buffer: pdfBuffer
     };
   } finally {
@@ -228,7 +228,7 @@ export async function getQuotationExcel(context, quotationId) {
     const excelBuffer = await generateDocumentExcel(publicQuotation(q), 'quotation', tenant || {});
 
     return {
-      filename: `TheWoodWise_Quotation_${q.quotation_number}.xlsx`,
+      filename: `ERP_Portal_Quotation_${q.quotation_number}.xlsx`,
       buffer: excelBuffer
     };
   } finally {
@@ -246,7 +246,7 @@ export async function getInvoicePdf(context, invoiceId) {
     const pdfBuffer = await generateDocumentPdf(publicInvoice(inv), 'invoice', tenant || {});
 
     return {
-      filename: `TheWoodWise_Invoice_${inv.invoice_number}.pdf`,
+      filename: `ERP_Portal_Invoice_${inv.invoice_number}.pdf`,
       buffer: pdfBuffer
     };
   } finally {

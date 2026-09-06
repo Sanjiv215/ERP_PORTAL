@@ -1,17 +1,17 @@
 {
-  "name": "TheWoodWise LMS",
-  "short_name": "TheWoodWise",
-  "description": "High-performance operating system and ERP for interior design contractors and construction firms.",
+  "name": "ERP Portal",
+  "short_name": "ERP Portal",
+  "description": "High-performance enterprise resource planning and operations platform.",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#F8FAFC",
-  "theme_color": "#0F5394",
+  "theme_color": "#0F172A",
   "orientation": "any",
   "icons": [
     {
-      "src": "/woodwise-logo.png",
+      "src": "/erp-icon.svg",
       "sizes": "192x192 512x512",
-      "type": "image/png",
+      "type": "image/svg+xml",
       "purpose": "any maskable"
     },
     {

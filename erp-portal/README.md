@@ -1,196 +1,121 @@
-# TheWoodWise
+# ERP Portal
 
-TheWoodWise is a multi-tenant ERP and operations platform for interior contractors, custom furniture businesses, carpentry workshops, and project-based field teams. It centralizes employee management, attendance, payroll, project tracking, financial documents, and tenant administration in a single workflow.
+ERP Portal is a modern, full-stack multi-tenant Enterprise Resource Planning and operations management platform. It centralizes employee management, attendance tracking, payroll calculation, project and site accounting, quotations, invoices, vendor bills, profit & loss analysis, and tenant administration in a unified workspace.
 
 ---
 
 ## Features
 
-- Tenant-aware authentication and role-based access control
-- Employee directory with project assignments and status management
-- Attendance tracking and monthly payroll calculation
-- Draft and finalized payroll runs with versioned recalculation logic
-- Project-based profit and loss tracking
-- Quotations, invoices, bills, pending payment aging, and document management
-- Meetings, session tracking, and audit logging
-- PostgreSQL-backed multi-tenant data model with Redis session support
+- **Multi-Tenant Architecture**: Complete data isolation across organizations with tenant-scoped routing and context.
+- **Authentication & RBAC**: Secure JWT access & HTTP-only refresh tokens, bcrypt password hashing, and role-based permissions (`PlatformSuperAdmin`, `TenantAdmin`, `Manager`, `Accountant`, `Employee`).
+- **Self-Registration**: Built-in signup workflow allowing new organizations to initialize their isolated workspace.
+- **Employee Directory & Attendance**: Staff profiles, secure AES-256-GCM encrypted sensitive fields, daily attendance logging, and project assignments.
+- **Salary & Payroll Engine**: Versioned payroll calculations, attendance-linked wage calculation, customizable overtime/multipliers, advance ledger deductions, and branded PDF payslips.
+- **Financial Documents & Billing**: Branded Quotations & Invoices with PDF/Excel export, vendor bills tracking, aging receivables, and P&L analytics.
+- **Meetings & Audit Trail**: Team meetings tracker and comprehensive system audit logging.
+
+> [!NOTE]
+> This repository is initialized **data-free** with empty database tables (only core system roles defined) and includes a temporary mock logo ready for customization.
 
 ---
 
 ## Tech Stack
 
-- Frontend: React 19, Vite, React Router 7
-- Backend: Node.js, Express 5, PostgreSQL, Redis
-- Validation: Zod
-- Security: JWT, cookie-based auth, bcrypt, AES-256-GCM encrypted employee fields
-- Testing: Vitest
+- **Frontend**: React 19, Vite, TailwindCSS, React Router 7, `@tanstack/react-query`, Lucide React
+- **Backend**: Node.js, Express 5, PostgreSQL (`pg`), Redis (`ioredis`)
+- **Validation & Security**: Zod, Helmet, CORS, Cookie-parser, AES-256-GCM, Bcrypt
+- **Document Engines**: PDFKit (PDF generation), ExcelJS (Spreadsheets)
+- **Testing**: Vitest with JSDOM
 
 ---
 
 ## Prerequisites
 
-Before you start, make sure the following are available:
+Before starting, ensure the following are installed:
 
-1. Node.js 20+ recommended
-2. npm 10+
-3. PostgreSQL 14+ or 15+ (this project is configured for PostgreSQL)
-4. Redis 7+ for session cache and revocation support
+1. **Node.js**: 20+ (ES Modules supported)
+2. **npm**: 10+
+3. **PostgreSQL**: 14+ (or Managed PostgreSQL on Render / Supabase / Neon)
+4. **Redis**: 7+ (or Upstash Redis for cloud caching / session tracking)
 
 ---
 
 ## Quick Start
 
-### 1. Install dependencies
+### 1. Install Dependencies
 
 ```bash
 npm install
 ```
 
-### 2. Configure environment variables
+### 2. Configure Environment Variables
 
-Copy the example file and fill in the required values:
+Copy the example environment file:
 
 ```bash
 cp .env.example .env
 ```
 
-The project expects values such as:
-
-- `PORT`
-- `CLIENT_ORIGIN`
-- `DATABASE_URL` or `PG_*` values
-- `JWT_ACCESS_SECRET`
-- `JWT_REFRESH_SECRET`
-- `EMPLOYEE_FIELD_ENCRYPTION_KEY_BASE64`
-- `REDIS_URL`
-
-For local development, a typical setup looks like this:
+Fill in your configuration values:
 
 ```env
 NODE_ENV=development
 PORT=4000
 CLIENT_ORIGIN=http://localhost:5173
-DATABASE_URL=postgresql://postgres:your_password@127.0.0.1:5432/contractoros
-JWT_ACCESS_SECRET=replace_with_a_long_random_value
-JWT_REFRESH_SECRET=replace_with_a_different_long_random_value
-EMPLOYEE_FIELD_ENCRYPTION_KEY_BASE64=replace_with_32_byte_base64_key
+DATABASE_URL=postgresql://postgres:your_password@127.0.0.1:5432/erp_portal
+JWT_ACCESS_SECRET=replace_with_a_long_random_jwt_access_secret_min_32_chars
+JWT_REFRESH_SECRET=replace_with_a_different_long_random_jwt_refresh_secret_min_32_chars
+EMPLOYEE_FIELD_ENCRYPTION_KEY_BASE64=replace_with_32_random_bytes_base64_key==
 REDIS_URL=redis://127.0.0.1:6379
 ```
 
-You can generate the secrets with:
+Generate secure secrets using:
 
 ```bash
 openssl rand -hex 32
 openssl rand -base64 32
 ```
 
-### 3. Run database migration
+### 3. Initialize Database & Run Migrations
 
 ```bash
 npm run migrate
 ```
 
-### 4. Start the app
+To reset all data to a clean state:
+
+```bash
+node server/src/db/reset_and_seed_user.js
+```
+
+### 4. Start Development Server
 
 ```bash
 npm run dev
 ```
 
 This starts:
+- **API Server**: `http://localhost:4000`
+- **Vite Web Frontend**: `http://localhost:5173`
 
-- API server on http://localhost:4000
-- Vite frontend on http://localhost:5173
-
-Open the app in your browser at:
-
-```text
-http://localhost:5173
-```
+Navigate to `http://localhost:5173` in your browser. You can click **Sign up** to create your first workspace and administrator account.
 
 ---
 
-## Demo setup
+## Available Scripts
 
-A demo tenant and admin user can be created with:
-
-```bash
-node server/src/db/seed_demo_account.js
-```
-
-This script creates a separate demo workspace and inserts a demo `TenantAdmin` account for the email `sanjiv@gmail.com`.
-
-If you want a consistent password, set this variable before running the script:
-
-```env
-DEMO_ACCOUNT_PASSWORD=your_password_here
-```
-
-If it is not set, a random password is generated automatically for that run.
-
----
-
-## Project structure
-
-```text
-LMS/
-├── client/                        # React frontend
-│   ├── public/
-│   └── src/
-│       ├── api/
-│       ├── components/
-│       ├── pages/
-│       ├── state/
-│       └── styles.css
-├── server/
-│   └── src/
-│       ├── config/
-│       ├── constants/
-│       ├── db/
-│       ├── middleware/
-│       ├── redis/
-│       ├── repositories/
-│       ├── routes/
-│       ├── services/
-│       ├── tests/
-│       └── utils/
-├── .env.example
-├── package.json
-├── vite.config.js
-├── render.yaml
-├── vercel.json
-├── LICENSE
-├── README.md
-└── backups/
-```
-
----
-
-## Available scripts
-
-```bash
-npm run dev
-npm run dev:api
-npm run dev:web
-npm run build
-npm run preview
-npm run start
-npm run migrate
-npm test
-```
-
----
-
-## Notes
-
-- The backend validates environment variables at startup using Zod.
-- The app uses tenant-scoped access patterns across repositories and routes.
-- Role permissions are enforced server-side for admin, manager, accountant, and employee flows.
-- Payroll and document flows are designed around production-grade business accounting needs.
+| Command | Description |
+|---|---|
+| `npm run dev` | Runs both backend API and frontend dev server concurrently |
+| `npm run dev:api` | Runs backend API server with nodemon auto-reloading |
+| `npm run dev:web` | Runs Vite frontend development server |
+| `npm run build` | Builds production frontend bundles to `dist/client` |
+| `npm run start` | Runs the production backend Express server |
+| `npm run migrate` | Executes PostgreSQL database migrations |
+| `npm test` | Runs Vitest automated test suites |
 
 ---
 
 ## License
 
-Proprietary — All Rights Reserved.
-
-Copyright © 2026 TheWoodWise. Unauthorized reproduction, distribution, or deployment of this software is prohibited.
+Copyright © 2026 ERP Portal. All rights reserved.

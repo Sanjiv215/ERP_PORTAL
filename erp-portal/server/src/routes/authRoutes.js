@@ -34,14 +34,17 @@ function requestMeta(req) {
 authRouter.post(
   '/signup',
   authLimiter,
-  (_req, res) => {
-    return res.status(403).json({
-      error: {
-        code: 'REGISTRATION_DISABLED',
-        message: 'Public self-registration is disabled. Users and workspaces are provisioned by system administrators.'
-      }
+  validateBody(signupSchema),
+  asyncHandler(async (req, res) => {
+    const result = await signupTenant(req.body, requestMeta(req));
+    setRefreshCookie(res, result.refreshToken);
+
+    res.status(201).json({
+      accessToken: result.accessToken,
+      user: result.user,
+      tenant: result.tenant
     });
-  }
+  })
 );
 
 authRouter.post(

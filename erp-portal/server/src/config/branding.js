@@ -5,7 +5,7 @@ import { fileURLToPath } from 'node:url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const LOGO_PNG_PATH = path.resolve(__dirname, '../assets/woodwise-logo.png');
+const LOGO_PNG_PATH = path.resolve(__dirname, '../assets/erp-logo.png');
 
 let cachedLogoBuffer = null;
 
@@ -23,8 +23,8 @@ export function getBrandLogoBuffer() {
 }
 
 export const BRAND = {
-  name: 'TheWoodWise',
-  tagline: 'Precision Woodworking & Joinery Management',
+  name: 'ERP Portal',
+  tagline: 'Enterprise Operations & Resource Planning',
   logoPath: LOGO_PNG_PATH,
   colors: {
     primaryNavy: '#0F5394',
@@ -36,6 +36,6 @@ export const BRAND = {
     border: '#E2E8F0',
     white: '#FFFFFF'
   },
-  footerDisclaimer: 'This is a computer-generated document issued by TheWoodWise.',
+  footerDisclaimer: 'This is a computer-generated document issued by ERP Portal.',
   signatoryTitle: 'Authorized Signatory'
 };

@@ -1,6 +1,6 @@
 {
-  "name": "thewoodwise",
-  "version": "0.1.0",
+  "name": "erp-portal",
+  "version": "1.0.0",
   "private": true,
   "type": "module",
   "scripts": {

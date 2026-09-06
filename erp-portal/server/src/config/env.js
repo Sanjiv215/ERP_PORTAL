@@ -32,7 +32,7 @@ const envSchema = z.object({
   PG_PORT: z.coerce.number().default(5432),
   PG_USER: z.string().default('postgres'),
   PG_PASSWORD: z.string().default(''),
-  PG_DATABASE: z.string().default('lms_business'),
+  PG_DATABASE: z.string().default('erp_portal'),
   PG_SSL: z
     .preprocess((val) => {
       if (typeof val === 'boolean') return val;
@@ -42,8 +42,14 @@ const envSchema = z.object({
       }
       return false;
     }, z.boolean().default(false)),
-  JWT_ACCESS_SECRET: z.preprocess((val) => cleanStr(val), z.string().min(32)),
-  JWT_REFRESH_SECRET: z.preprocess((val) => cleanStr(val), z.string().min(32)),
+  JWT_ACCESS_SECRET: z.preprocess(
+    (val) => cleanStr(val) || (process.env.NODE_ENV === 'test' ? 'test-jwt-access-secret-minimum-32-chars-long' : undefined),
+    z.string().min(32)
+  ),
+  JWT_REFRESH_SECRET: z.preprocess(
+    (val) => cleanStr(val) || (process.env.NODE_ENV === 'test' ? 'test-jwt-refresh-secret-minimum-32-chars-long' : undefined),
+    z.string().min(32)
+  ),
   ACCESS_TOKEN_TTL: z.preprocess((val) => cleanStr(val), z.string().default('15m')),
   REFRESH_TOKEN_TTL_DAYS: z.coerce.number().default(7),
   REDIS_URL: z.preprocess((val) => cleanStr(val), z.string().default('redis://127.0.0.1:6379')),
@@ -62,7 +68,10 @@ const envSchema = z.object({
       if (s === 'lax' || s === 'strict' || s === 'none') return s;
       return undefined;
     }, z.enum(['lax', 'strict', 'none']).optional()),
-  EMPLOYEE_FIELD_ENCRYPTION_KEY_BASE64: z.preprocess((val) => cleanStr(val), z.string().min(1))
+  EMPLOYEE_FIELD_ENCRYPTION_KEY_BASE64: z.preprocess(
+    (val) => cleanStr(val) || (process.env.NODE_ENV === 'test' ? 'MDEyMzQ1Njc4OTAxMjM0NTY3ODkwMTIzNDU2Nzg5MDE=' : undefined),
+    z.string().min(1)
+  )
 });
 
 const parsed = envSchema.safeParse(process.env);

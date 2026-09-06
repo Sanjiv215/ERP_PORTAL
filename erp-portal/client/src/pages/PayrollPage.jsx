@@ -439,7 +439,7 @@ function RegeneratePayrollModal({ year, month, onClose, onRegenerated, authentic
                     <Shield size={16} /> Paid Staff Are 100% Protected
                   </div>
                   <p style={{ margin: 0, color: '#1E3A8A', fontSize: '0.8rem', lineHeight: 1.4 }}>
-                    TheWoodWise strictly guarantees that any employee who was already marked <strong>PAID</strong> in previous runs will remain locked and will <strong>NOT</strong> be recalculated or re-paid.
+                    ERP Portal strictly guarantees that any employee who was already marked <strong>PAID</strong> in previous runs will remain locked and will <strong>NOT</strong> be recalculated or re-paid.
                   </p>
                 </div>
 

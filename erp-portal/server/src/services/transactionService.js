@@ -34,7 +34,7 @@ export async function exportTransactionsReport(context, query = {}, format = 'pd
       `SELECT id, business_name, gst_number FROM tenants WHERE id = ? LIMIT 1`,
       [context.tenantId]
     );
-    const tenant = tenantRows[0] || { businessName: 'TheWoodWise' };
+    const tenant = tenantRows[0] || { businessName: 'ERP Portal' };
 
     if (format === 'excel' || format === 'xlsx') {
       const buffer = await generateTransactionHistoryExcel(result, tenant, query);

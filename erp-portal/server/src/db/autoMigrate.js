@@ -47,13 +47,6 @@ export async function ensureSchemaExtensions() {
         WHERE wage_type = 'monthly';
       `);
 
-      // Ensure any legacy demo business name is converted to TheWoodWise
-      await connection.query(`
-        UPDATE tenants
-        SET business_name = 'TheWoodWise'
-        WHERE business_name LIKE '%Demo Interiors%' OR business_name = 'Demo Interiors & Carpentry';
-      `);
-
       migrated = true;
     } finally {
       connection.release();

@@ -20,7 +20,7 @@ function formatDate(dateStr) {
 
 /**
  * Generates a clean, modern, branded PDF for Quotation or Invoice.
- * Uses centralized branding configuration and real TheWoodWise logo asset.
+ * Uses centralized branding configuration and ERP Portal logo asset.
  *
  * @param {Object} docData - The quotation or invoice data.
  * @param {'quotation'|'invoice'} docType - Document type ('quotation' | 'invoice').
@@ -535,7 +535,7 @@ export function generatePayslipPdf(payslipData = {}) {
       doc.fillColor(colors.white).fontSize(16).font('Helvetica-Bold').text(formatCurrency(lineItem.netAmount), 55, maxY + 22);
 
       doc.fillColor(colors.white).fontSize(7.5).font('Helvetica')
-        .text('Issued by TheWoodWise Payroll Engine', 340, maxY + 14, { align: 'right', width: 200 })
+        .text('Issued by ERP Portal Payroll Engine', 340, maxY + 14, { align: 'right', width: 200 })
         .text(`Date of Issue: ${formatDate(new Date().toISOString())}`, 340, maxY + 26, { align: 'right', width: 200 });
 
       // ── Footer Disclaimer ───────────────────────────────────────────────────

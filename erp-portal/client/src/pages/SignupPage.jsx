@@ -12,14 +12,15 @@ export function SignupPage() {
     email: '',
     phone: '',
     password: '',
-    acceptedTerms: false
+    confirmPassword: '',
+    acceptedTerms: true
   });
   const [error, setError] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
-    document.title = 'Create Workspace — TheWoodWise';
+    document.title = 'Sign Up — ERP Portal';
   }, []);
 
   if (bootstrapping) {
@@ -27,8 +28,8 @@ export function SignupPage() {
       <main className="auth-shell">
         <section className="auth-panel" style={{ textAlign: 'center', padding: '48px 24px' }}>
           <img
-            src="/woodwise-logo.svg"
-            alt="TheWoodWise Logo"
+            src="/erp-icon.svg"
+            alt="ERP Portal Logo"
             className="auth-brand-logo"
             width="64"
             height="64"
@@ -64,13 +65,24 @@ export function SignupPage() {
   async function handleSubmit(event) {
     event.preventDefault();
     setError('');
+
+    if (form.password.length < 8) {
+      setError('Password must be at least 8 characters long.');
+      return;
+    }
+
+    if (form.password !== form.confirmPassword) {
+      setError('Passwords do not match.');
+      return;
+    }
+
     setSubmitting(true);
 
     try {
       await signup(form);
       navigate('/app/dashboard', { replace: true });
     } catch (apiError) {
-      setError(apiError.message || 'Failed to create workspace.');
+      setError(apiError.message || 'Failed to create account.');
     } finally {
       setSubmitting(false);
     }
@@ -81,27 +93,27 @@ export function SignupPage() {
       <section className="auth-panel wide">
         <div style={{ textAlign: 'center', marginBottom: 24 }}>
           <img
-            src="/woodwise-logo.svg"
-            alt="TheWoodWise Logo"
+            src="/erp-icon.svg"
+            alt="ERP Portal Logo"
             className="auth-brand-logo"
             width="72"
             height="72"
           />
           <h1 style={{ fontSize: '1.5rem', fontWeight: 800, margin: '0 0 6px', color: 'var(--text-main)' }}>
-            Create your TheWoodWise Workspace
+            Create your ERP Portal Workspace
           </h1>
-          <p className="muted">Set up an isolated multi-tenant organization and first Admin user.</p>
+          <p className="muted">Set up an isolated enterprise workspace and administrator account.</p>
         </div>
 
         <form className="form-grid" onSubmit={handleSubmit}>
           {error && <p className="form-error full-width" role="alert">{error}</p>}
 
           <label>
-            Business / Contractor Name
+            Workspace / Company Name
             <input
               value={form.businessName}
               onChange={(event) => updateField('businessName', event.target.value)}
-              placeholder="e.g. Apex Woodworks & Interiors"
+              placeholder="e.g. Acme Enterprises"
               required
               minLength={2}
             />
@@ -117,7 +129,7 @@ export function SignupPage() {
           </label>
 
           <label>
-            Admin Full Name
+            Full Name
             <input
               autoComplete="name"
               value={form.name}
@@ -138,20 +150,20 @@ export function SignupPage() {
             />
           </label>
 
-          <label>
+          <label className="full-width">
             Work Email Address
             <input
               type="email"
               autoComplete="email"
               value={form.email}
               onChange={(event) => updateField('email', event.target.value)}
-              placeholder="admin@apexwood.com"
+              placeholder="admin@example.com"
               required
             />
           </label>
 
           <label>
-            Password (min 10 characters)
+            Password (min 8 characters)
             <input
               type="password"
               autoComplete="new-password"
@@ -159,7 +171,20 @@ export function SignupPage() {
               onChange={(event) => updateField('password', event.target.value)}
               placeholder="••••••••••••"
               required
-              minLength={10}
+              minLength={8}
+            />
+          </label>
+
+          <label>
+            Confirm Password
+            <input
+              type="password"
+              autoComplete="new-password"
+              value={form.confirmPassword}
+              onChange={(event) => updateField('confirmPassword', event.target.value)}
+              placeholder="••••••••••••"
+              required
+              minLength={8}
             />
           </label>
 
@@ -179,7 +204,7 @@ export function SignupPage() {
 
           <button className="primary-button full-width" type="submit" disabled={submitting} style={{ marginTop: 8 }}>
             <Building2 size={16} />
-            {submitting ? 'Creating Workspace...' : 'Create TheWoodWise Workspace'}
+            {submitting ? 'Creating Workspace...' : 'Create ERP Portal Workspace'}
           </button>
         </form>
 

@@ -17,11 +17,12 @@ import {
 import { requireRole } from '../middleware/requireRole.js';
 import { resolveTenantContext } from '../middleware/resolveTenantContext.js';
 import { AppError } from '../middleware/errorHandler.js';
+import { env } from '../config/env.js';
 
 // ── Test Setup for Environment & Keys ────────────────────────────────────────
 
-const ACCESS_SECRET = '0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef';
-const REFRESH_SECRET = 'fedcba9876543210fedcba9876543210fedcba9876543210fedcba9876543210';
+const ACCESS_SECRET = env.JWT_ACCESS_SECRET || '0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef';
+const REFRESH_SECRET = env.JWT_REFRESH_SECRET || 'fedcba9876543210fedcba9876543210fedcba9876543210fedcba9876543210';
 const ENCRYPTION_KEY_BASE64 = 'kK3J8eF1V+4q7U3xY8a9b2c3d4e5f6g7h8i9j0k1l2M=';
 
 vi.stubEnv('JWT_ACCESS_SECRET', ACCESS_SECRET);

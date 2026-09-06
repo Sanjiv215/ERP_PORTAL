@@ -9,7 +9,7 @@ describe('Manual DB Insert & Authentication Flow', () => {
   it('successfully authenticates a manually-inserted user with bcrypt cost factor 12', async () => {
     const tenantId = randomUUID();
     const userId = randomUUID();
-    const email = `manual_admin_${Date.now()}@thewoodwise.com`;
+    const email = `manual_admin_${Date.now()}@erpportal.com`;
     const plainPassword = 'ManualPassword2026!';
     const passwordHash = await bcrypt.hash(plainPassword, 12);
 
@@ -18,7 +18,7 @@ describe('Manual DB Insert & Authentication Flow', () => {
       // 1. Insert tenant manually into database
       await connection.execute(
         `INSERT INTO tenants (id, business_name, gst_number, status)
-         VALUES (?, 'TheWoodWise Manual Test Tenant', ?, 'active')`,
+         VALUES (?, 'ERP Portal Manual Test Tenant', ?, 'active')`,
         [tenantId, `29ABCDE${Date.now().toString().slice(-4)}Z5`]
       );
 

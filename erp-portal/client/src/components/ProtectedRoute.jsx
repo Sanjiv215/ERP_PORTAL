@@ -10,8 +10,8 @@ export function ProtectedRoute({ children }) {
       <main className="auth-shell">
         <section className="auth-panel" style={{ textAlign: 'center', padding: '48px 24px' }}>
           <img
-            src="/woodwise-logo.svg"
-            alt="TheWoodWise Logo"
+            src="/erp-icon.svg"
+            alt="ERP Portal Logo"
             className="auth-brand-logo"
             width="64"
             height="64"

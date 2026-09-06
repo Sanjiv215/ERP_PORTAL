@@ -1,6 +1,6 @@
 import { env } from '../config/env.js';
 
-export const REFRESH_COOKIE_NAME = 'contractoros_refresh';
+export const REFRESH_COOKIE_NAME = 'erp_portal_refresh';
 
 export function getCookieOptions() {
   const isProduction = env.NODE_ENV === 'production';

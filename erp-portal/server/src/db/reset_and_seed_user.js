@@ -7,18 +7,25 @@ import bcrypt from 'bcrypt';
 
 const BCRYPT_COST = 12;
 
+import { env } from '../config/env.js';
+
 async function resetAndSeed() {
-  const url = process.env.DATABASE_URL;
-  if (!url) {
-    throw new Error('DATABASE_URL is not set in .env');
-  }
+  console.log('Connecting to PostgreSQL database to truncate data...');
+  const clientConfig = env.DATABASE_URL
+    ? {
+        connectionString: env.DATABASE_URL,
+        ssl: env.PG_SSL ? { rejectUnauthorized: false } : undefined
+      }
+    : {
+        host: env.PG_HOST || '127.0.0.1',
+        port: Number(env.PG_PORT) || 5432,
+        user: env.PG_USER || 'postgres',
+        password: env.PG_PASSWORD || '',
+        database: env.PG_DATABASE || 'erp_portal',
+        ssl: env.PG_SSL ? { rejectUnauthorized: false } : undefined
+      };
 
-  console.log('Connecting to PostgreSQL database to truncate data and seed new admin...');
-  const client = new Client({
-    connectionString: url,
-    ssl: { rejectUnauthorized: false }
-  });
-
+  const client = new Client(clientConfig);
   await client.connect();
 
   try {
@@ -61,68 +68,16 @@ async function resetAndSeed() {
       ON CONFLICT (name) DO NOTHING;
     `);
 
-    console.log('3. Creating new Tenant (id: 001)...');
-    await client.query(
-      `INSERT INTO tenants (id, business_name, gst_number, subscription_plan, status)
-       VALUES ($1, $2, $3, $4, $5)`,
-      ['001', 'TheWoodWise', '29ABCDE1234F1Z5', 'enterprise', 'active']
-    );
-
-    console.log('4. Hashing password and creating new Admin user (virendra)...');
-    const passwordPlain = process.env.ADMIN_ACCOUNT_PASSWORD || randomBytes(16).toString('hex');
-    const passwordHash = await bcrypt.hash(passwordPlain, BCRYPT_COST);
-
-    await client.query(
-      `INSERT INTO users (id, tenant_id, name, email, password_hash, role, is_active)
-       VALUES ($1, $2, $3, $4, $5, $6, $7)`,
-      [
-        '001',
-        '001',
-        'virendra',
-        'virendraprasad360@gmail.com',
-        passwordHash,
-        'TenantAdmin',
-        true
-      ]
-    );
-
-    console.log('5. Initializing default document sequences & payroll settings for tenant 001...');
-    const currentYear = new Date().getFullYear();
-    await client.query(
-      `INSERT INTO document_sequences (tenant_id, doc_type, year, last_seq)
-       VALUES 
-         ('001', 'quotation', $1, 0),
-         ('001', 'invoice', $1, 0)
-       ON CONFLICT (tenant_id, doc_type, year) DO NOTHING`,
-      [currentYear]
-    );
-
-    await client.query(
-      `INSERT INTO payroll_settings (tenant_id, working_days_per_month, overtime_multiplier, half_day_multiplier)
-       VALUES ('001', 26, 1.50, 0.50)
-       ON CONFLICT (tenant_id) DO NOTHING`
-    );
-
     console.log('===============================================================');
-    console.log('✓ SUCCESS: Database truncated and new user seeded successfully!');
-    console.log('  ID:        001');
-    console.log('  Name:      virendra');
-    console.log('  Email:     virendraprasad360@gmail.com');
-    console.log('  Role:      TenantAdmin (Admin)');
-    console.log('  Active:    true');
+    console.log('✓ SUCCESS: Database truncated and reset to a clean, empty state.');
+    console.log('  All application tables are empty. System roles initialized.');
     console.log('===============================================================');
-
-    // Verify user in DB
-    const res = await client.query('SELECT id, name, email, role, is_active FROM users;');
-    console.log('Current users in DB:');
-    console.table(res.rows);
-
   } finally {
     await client.end();
   }
 }
 
 resetAndSeed().catch((err) => {
-  console.error('Reset and seed failed:', err);
+  console.error('Reset database failed:', err);
   process.exit(1);
 });

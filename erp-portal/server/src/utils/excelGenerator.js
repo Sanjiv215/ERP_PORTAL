@@ -13,7 +13,7 @@ function formatDate(dateStr) {
 
 /**
  * Generates a formatted .xlsx workbook buffer for a Quotation or Invoice.
- * Uses centralized TheWoodWise branding config and embeds the real logo image.
+ * Uses centralized ERP Portal branding config and embeds logo image.
  *
  * @param {Object} docData - The quotation or invoice data.
  * @param {'quotation'|'invoice'} docType - Document type.

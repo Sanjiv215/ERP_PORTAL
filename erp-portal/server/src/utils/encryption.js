@@ -25,8 +25,10 @@ export function parseKey(encodedOrBuffer) {
   return key;
 }
 
+import { env } from '../config/env.js';
+
 function getEncryptionKey() {
-  const encoded = process.env.EMPLOYEE_FIELD_ENCRYPTION_KEY_BASE64;
+  const encoded = env.EMPLOYEE_FIELD_ENCRYPTION_KEY_BASE64 || process.env.EMPLOYEE_FIELD_ENCRYPTION_KEY_BASE64;
   if (!encoded) {
     throw new Error('EMPLOYEE_FIELD_ENCRYPTION_KEY_BASE64 is required for employee sensitive fields');
   }

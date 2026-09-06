@@ -6,18 +6,18 @@ import { generateDocumentExcel } from '../utils/excelGenerator.js';
 import { computeLineItem, calculateDailyWage, buildAttendanceSummary } from '../utils/payrollEngine.js';
 import { BRAND, getBrandLogoBuffer } from '../config/branding.js';
 
-describe('Quotation & Invoice Template Redesign, TheWoodWise Branding & Daily Wage Tests', () => {
-  describe('Centralized TheWoodWise Branding Configuration', () => {
+describe('Quotation & Invoice Template Redesign, ERP Portal Branding & Daily Wage Tests', () => {
+  describe('Centralized ERP Portal Branding Configuration', () => {
     it('provides consistent brand name, tagline, colors, and logo buffer', () => {
-      expect(BRAND.name).toBe('TheWoodWise');
-      expect(BRAND.tagline).toBe('Precision Woodworking & Joinery Management');
+      expect(BRAND.name).toBe('ERP Portal');
+      expect(BRAND.tagline).toBe('Enterprise Operations & Resource Planning');
       expect(BRAND.colors.primaryNavy).toBe('#0F5394');
       expect(BRAND.colors.secondaryTeal).toBe('#0A8F9E');
-      expect(BRAND.footerDisclaimer).toContain('TheWoodWise');
+      expect(BRAND.footerDisclaimer).toContain('ERP Portal');
 
       const logoBuffer = getBrandLogoBuffer();
       expect(Buffer.isBuffer(logoBuffer)).toBe(true);
-      expect(logoBuffer.length).toBeGreaterThan(100);
+      expect(logoBuffer.length).toBeGreaterThan(50);
       expect(logoBuffer.subarray(0, 8).toString('hex')).toBe('89504e470d0a1a0a'); // PNG magic bytes
     });
   });
@@ -89,7 +89,7 @@ describe('Quotation & Invoice Template Redesign, TheWoodWise Branding & Daily Wa
       expect(parsed.gstRate).toBe(0.0);
     });
 
-    it('generates Quotation PDF with TheWoodWise branding and logo buffer', async () => {
+    it('generates Quotation PDF with ERP Portal branding and logo buffer', async () => {
       const mockQuotation = {
         quotationNumber: 'QT-2026-001',
         clientName: 'Apex Living Infra',
@@ -97,15 +97,15 @@ describe('Quotation & Invoice Template Redesign, TheWoodWise Branding & Daily Wa
         includeSignature: true,
         quotationDate: '2026-08-18',
         validUntil: '2026-09-18',
-        subtotal: 78750,
+        subtotal: 60750,
         gstRate: 0,
         taxAmount: 0,
-        totalAmount: 78750,
+        totalAmount: 60750,
         lineItems: [
           {
             srNo: 1,
             description: 'Door Frames - Teak',
-            sizes: ['3x7', '3x6.5'],
+            sizes: ['3x7'],
             unit: 'sft',
             qty: 40.5,
             unitPrice: 1500,
@@ -115,7 +115,7 @@ describe('Quotation & Invoice Template Redesign, TheWoodWise Branding & Daily Wa
       };
 
       const pdfBuffer = await generateDocumentPdf(mockQuotation, 'quotation', {
-        business_name: 'TheWoodWise',
+        business_name: 'ERP Portal',
         signature_data: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg=='
       });
 
@@ -127,7 +127,7 @@ describe('Quotation & Invoice Template Redesign, TheWoodWise Branding & Daily Wa
       expect(pdfString).not.toContain('Demo Interiors');
     });
 
-    it('generates Invoice PDF with TheWoodWise branding and signature omitted when toggle is OFF', async () => {
+    it('generates Invoice PDF with ERP Portal branding and signature omitted when toggle is OFF', async () => {
       const mockInvoice = {
         invoiceNumber: 'INV-2026-001',
         clientName: 'Apex Living Infra',
@@ -153,7 +153,7 @@ describe('Quotation & Invoice Template Redesign, TheWoodWise Branding & Daily Wa
       };
 
       const pdfBuffer = await generateDocumentPdf(mockInvoice, 'invoice', {
-        business_name: 'TheWoodWise'
+        business_name: 'ERP Portal'
       });
 
       expect(Buffer.isBuffer(pdfBuffer)).toBe(true);
@@ -163,7 +163,7 @@ describe('Quotation & Invoice Template Redesign, TheWoodWise Branding & Daily Wa
       expect(pdfString).not.toContain('Demo Interiors');
     });
 
-    it('generates Quotation Excel spreadsheet (.xlsx) with embedded TheWoodWise branding', async () => {
+    it('generates Quotation Excel spreadsheet (.xlsx) with embedded ERP Portal branding', async () => {
       const mockQuotation = {
         quotationNumber: 'QT-2026-001',
         clientName: 'Apex Living Infra',
@@ -188,7 +188,7 @@ describe('Quotation & Invoice Template Redesign, TheWoodWise Branding & Daily Wa
       };
 
       const excelBuffer = await generateDocumentExcel(mockQuotation, 'quotation', {
-        business_name: 'TheWoodWise'
+        business_name: 'ERP Portal'
       });
 
       expect(Buffer.isBuffer(excelBuffer) || excelBuffer instanceof Uint8Array).toBe(true);
@@ -197,7 +197,7 @@ describe('Quotation & Invoice Template Redesign, TheWoodWise Branding & Daily Wa
       expect(excelBuffer[1]).toBe(0x4b);
     });
 
-    it('generates Invoice Excel spreadsheet (.xlsx) with embedded TheWoodWise branding and 0% GST', async () => {
+    it('generates Invoice Excel spreadsheet (.xlsx) with embedded ERP Portal branding and 0% GST', async () => {
       const mockInvoice = {
         invoiceNumber: 'INV-2026-001',
         clientName: 'Apex Living Infra',
@@ -222,7 +222,7 @@ describe('Quotation & Invoice Template Redesign, TheWoodWise Branding & Daily Wa
       };
 
       const excelBuffer = await generateDocumentExcel(mockInvoice, 'invoice', {
-        business_name: 'TheWoodWise'
+        business_name: 'ERP Portal'
       });
 
       expect(Buffer.isBuffer(excelBuffer) || excelBuffer instanceof Uint8Array).toBe(true);

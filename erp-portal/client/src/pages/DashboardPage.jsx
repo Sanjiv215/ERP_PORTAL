@@ -112,7 +112,7 @@ export function DashboardPage() {
       <section className="content">
         <Header
           title="Dashboard"
-          subtitle="Enterprise contractor operations, workforce management, and financial health."
+          subtitle="Enterprise operations, workforce management, and financial health."
         >
           <Link to="/app/quotations" className="secondary-button" style={{ textDecoration: 'none' }}>
             <Plus size={16} /> New Quote
@@ -157,7 +157,7 @@ export function DashboardPage() {
                   {user?.name}
                 </h3>
                 <span style={{ fontSize: '0.72rem', color: '#94A3B8' }}>
-                  {tenant?.businessName || 'TheWoodWise'} · {user?.role}
+                  {tenant?.businessName || 'ERP Portal'} · {user?.role}
                 </span>
               </div>
             </div>
@@ -357,7 +357,7 @@ export function DashboardPage() {
                   Welcome back, {user?.name}
                 </h2>
                 <p style={{ margin: '4px 0 0', fontSize: '0.85rem', color: '#CBD5E1' }}>
-                  Role: <strong style={{ color: '#FFFFFF' }}>{user?.role}</strong> · Workspace: <strong style={{ color: 'var(--brand-teal)' }}>{tenant?.businessName || 'TheWoodWise'}</strong>. Tenant isolation active.
+                  Role: <strong style={{ color: '#FFFFFF' }}>{user?.role}</strong> · Workspace: <strong style={{ color: 'var(--brand-teal)' }}>{tenant?.businessName || 'ERP Portal'}</strong>. Tenant isolation active.
                 </p>
               </div>
             </div>

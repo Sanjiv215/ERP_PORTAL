@@ -8,7 +8,7 @@ export function Header({ title, subtitle, showBack, onBack, rightAction, childre
 
   useEffect(() => {
     if (title) {
-      document.title = `${title} — TheWoodWise`;
+      document.title = `${title} — ERP Portal`;
     }
   }, [title]);
 

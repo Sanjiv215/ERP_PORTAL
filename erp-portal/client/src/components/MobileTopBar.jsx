@@ -40,9 +40,9 @@ export function MobileTopBar({ title, subtitle, showBack, onBack, rightAction })
         )}
 
         <div className="mobile-topbar-brand-wrap">
-          <img src="/woodwise-logo.svg" alt="TheWoodWise" className="mobile-topbar-logo" />
+          <img src="/erp-icon.svg" alt="ERP Portal" className="mobile-topbar-logo" />
           <div className="mobile-topbar-titles">
-            <h1 className="mobile-topbar-title">{title || 'TheWoodWise'}</h1>
+            <h1 className="mobile-topbar-title">{title || 'ERP Portal'}</h1>
             {subtitle ? (
               <p className="mobile-topbar-subtitle">{subtitle}</p>
             ) : tenant?.businessName ? (
